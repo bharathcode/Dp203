@@ -2,12 +2,12 @@
 	"name": "openrowset",
 	"properties": {
 		"content": {
-			"query": "",
+			"query": "select * FROM\nOPENROWSET(\n    BULK 'https://dp203storageaccount2024.blob.core.windows.net/parquet/*.parquet',\n    FORMAT = 'parquet'\n) as [data1]",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "master",
+				"databaseName": "aasdev",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
