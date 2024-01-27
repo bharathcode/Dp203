@@ -1,0 +1,168 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "dp203synapseworkspace2024"
+		},
+		"dp203storageaccount2024_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'dp203storageaccount2024'"
+		},
+		"dp203synapseworkspace2024-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'dp203synapseworkspace2024-WorkspaceDefaultSqlServer'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:dp203synapseworkspace2024.sql.azuresynapse.net,1433;Initial Catalog=@{linkedService().DBName}"
+		},
+		"dp203storageaccount2024_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dp203storageaccount2024.dfs.core.windows.net/"
+		},
+		"dp203synapseworkspace2024-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://dp203storageaccount2024.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/dp203storageaccount2024')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('dp203storageaccount2024_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('dp203storageaccount2024_accountKey')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dp203synapseworkspace2024-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('dp203synapseworkspace2024-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dp203synapseworkspace2024-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('dp203synapseworkspace2024-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/serverless-externalTable-csv')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "create DATABASE aaasdev\n\ncreate MASTER KEY ENCRYPTION by PASSWORD ='#NeedT0Upgrage'\n\nCREATE DATABASE SCOPED CREDENTIAL SasToken\nWITH IDENTITY ='SHARED ACCESS SIGNATURE',\n     SECRET ='sv=2022-11-02&ss=b&srt=sco&sp=rwdlyx&se=2024-01-27T13:20:40Z&st=2024-01-27T05:20:40Z&spr=https&sig=Qv1JCXKNQn0J6nifo0xb9z9vEPCJ6Zs9%2BvGvN0Sca74%3D'\n\nCREATE EXTERNAL DATA SOURCE LOG_FILE\nWITH (\n    LOCATION ='https://dp203storageaccount2024.blob.core.windows.net/csv',\n    CREDENTIAL =SasToken\n)\n\nCREATE EXTERNAL FILE FORMAT fileformat2\nwith(\n    FORMAT_TYPE = DELIMITEDTEXT,\n    FORMAT_OPTIONS (\n        FIRST_ROW =2,\n        FIELD_TERMINATOR =','\n    )\n)\n\ndrop EXTERNAL TABLE logdata\nCREATE EXTERNAL TABLE logdata\n(\n    [Correlation id] [varchar](200) NULL,\n\t[Operation name] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Event category] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [datetime] NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n\n)\nWITH(\n    LOCATION ='/Log.csv',\n    DATA_SOURCE =LOG_FILE,\n    FILE_FORMAT =fileformat2\n)\n\nselect * from logdata\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "aaasdev",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/serverless-externalTable-parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "create database aaastest\n\ncreate MASTER KEY ENCRYPTION by PASSWORD ='Welcome@123'\n\nCREATE DATABASE SCOPED CREDENTIAL SasToken2\nWITH IDENTITY = 'SHARED ACCESS SIGNATURE',\n     SECRET ='sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupyx&se=2024-01-27T14:15:20Z&st=2024-01-27T06:15:20Z&spr=https&sig=F9Uzy2LK2HDwVSSQVE1%2FczEsfxOeKwG9Bu85KHcsax0%3D'\n\nCREATE EXTERNAL DATA SOURCE LOGDATA_PARQUET\nWITH (\n    LOCATION ='https://dp203storageaccount2024.blob.core.windows.net/parquet',\n    CREDENTIAL=SasToken2\n)\n\nCREATE EXTERNAL FILE FORMAT logdata_parquet\nwith(\n    FORMAT_TYPE = PARQUET\n    )\n\nCREATE EXTERNAL TABLE logdata_parquet\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](500) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Event initiated by] [varchar](1000) NULL,\n\t[Resource type] [varchar](1000) NULL,\n\t[Resource group] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n\n)\nWITH(\n    LOCATION ='/log.parquet',\n    DATA_SOURCE =LOGDATA_PARQUET,\n    FILE_FORMAT=logdata_parquet\n)\n\nselect * from logdata_parquet",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "aaastest",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		}
+	]
+}
