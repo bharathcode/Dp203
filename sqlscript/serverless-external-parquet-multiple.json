@@ -1,0 +1,17 @@
+{
+	"name": "serverless-external-parquet-multiple",
+	"properties": {
+		"content": {
+			"query": "--CREATE DATABASE aasdev;\n\nCREATE MASTER KEY ENCRYPTION BY PASSWORD ='Welcome@123';\n\nCREATE DATABASE SCOPED CREDENTIAL SasToken\nwith IDENTITY ='SHARED ACCESS SIGNATURE',\n     SECRET ='sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupyx&se=2024-01-27T15:04:04Z&st=2024-01-27T07:04:04Z&spr=https&sig=K9fYV9Smd40bWHOHN0qt4Zkk6JQsNV8ZGG2RUg4aAho%3D'\n;\nCREATE EXTERNAL DATA SOURCE multipleparquet\nWITH(\n    LOCATION ='https://dp203storageaccount2024.blob.core.windows.net/parquet',\n    CREDENTIAL=SasToken\n);\n\nCREATE EXTERNAL FILE FORMAT parquetfileformat\nwith(\n    FORMAT_TYPE =PARQUET,\n    DATA_COMPRESSION ='org.apache.hadoop.io.compress.GzipCodec'\n\n);\n\ncreate EXTERNAL TABLE log_data_parquet(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](100) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n)\nWITH(\n    LOCATION ='/',\n    DATA_SOURCE =multipleparquet,\n    FILE_FORMAT =parquetfileformat\n);\n\n\nSELECT * FROM log_data_parquet",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "aasdev",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
