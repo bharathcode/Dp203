@@ -1,0 +1,17 @@
+{
+	"name": "dedicatedsql-externaltable-csv",
+	"properties": {
+		"content": {
+			"query": "CREATE DATABASE SCOPED CREDENTIAL logfile_credential\nWITH IDENTITY='dp203storageaccount2024',\n     SECRET ='JIF6BIFPxAKsvXTNn4MB5doae0CHH8yBGecOr97UzK1nOMd3V0TkD/SuDuZ/EQEc/PU9nWzi6SPP+AStW3sWVw=='\n\nCREATE EXTERNAL FILE FORMAT csv_externaltable_format\nWITH (\n    FORMAT_TYPE= DELIMITEDTEXT,\n    FORMAT_OPTIONS(\n        FIRST_ROW=2,\n        STRING_DELIMITER=','\n    )\n)\n\nCREATE EXTERNAL DATA SOURCE logfile_externaltable\nWITH(\n    LOCATION ='abfss://csv@dp203storageaccount2024.dfs.core.windows.net',\n    CREDENTIAL=logfile_credential\n)\n\nCREATE EXTERNAL TABLE logdata_externaltable_csv\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](100) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n\n)\nWITH(\n    LOCATION='/Log.csv',\n    DATA_SOURCE=logfile_externaltable,\n    FILE_FORMAT=csv_externaltable_format\n)\n\nselect * from logdata_externaltable_csv\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "dp203dedicatesqlpool",
+				"poolName": "dp203dedicatesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
