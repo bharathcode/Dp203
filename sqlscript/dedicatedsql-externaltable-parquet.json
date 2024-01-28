@@ -7,8 +7,8 @@
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "dp203dedicatesqlpool",
-				"poolName": "dp203dedicatesqlpool"
+				"databaseName": "aasdev",
+				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
 		},
