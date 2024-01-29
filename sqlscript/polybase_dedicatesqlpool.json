@@ -2,7 +2,7 @@
 	"name": "polybase_dedicatesqlpool",
 	"properties": {
 		"content": {
-			"query": "drop table log_polybase_parquet;\n\ncreate table log_polybase_parquet\nwith(\n    DISTRIBUTION = ROUND_ROBIN\n)\nAS\nselect * from logdata_externaltable_csv\n\nselect * from log_polybase_parquet\n\n\n\nDELETE from log_polybase_parquet",
+			"query": "drop table log_polybase_parquet;\n\ncreate table log_polybase_parquet\nwith(\n    DISTRIBUTION = ROUND_ROBIN\n)\nAS\nselect * from logdata_externaltable_csv\n\nselect * from log_polybase_parquet\n\n\n\nDELETE from log_polybase_parquet\n\nselect count(0) from log_polybase_parquet",
 			"metadata": {
 				"language": "sql"
 			},
