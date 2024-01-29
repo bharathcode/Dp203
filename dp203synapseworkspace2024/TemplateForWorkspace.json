@@ -30,6 +30,350 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/loadfromCSV_ADLSGen2_dedicatesqlpool')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "loadfromCSV_ADLSGen2_dedicatesqlpool",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"writeBehavior": "Insert",
+								"sqlWriterUseTableLock": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Correlation id",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Correlationid",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Operation name",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Operationname",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Event category",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Eventcategory",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Level",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Level",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Time",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Time",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Subscription",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Subscription",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Event initiated by",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Eventinitiatedby",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Resource type",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resourcetype",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Resource group",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resourcegroup",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									},
+									{
+										"source": {
+											"name": "Resource",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resource",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DelimitedText1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SqlPoolTable1",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DelimitedText1')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolTable1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DelimitedText1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "dp203storageaccount2024",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Log.csv",
+						"fileSystem": "csv"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "Correlation id",
+						"type": "String"
+					},
+					{
+						"name": "Operation name",
+						"type": "String"
+					},
+					{
+						"name": "Status",
+						"type": "String"
+					},
+					{
+						"name": "Event category",
+						"type": "String"
+					},
+					{
+						"name": "Level",
+						"type": "String"
+					},
+					{
+						"name": "Time",
+						"type": "String"
+					},
+					{
+						"name": "Subscription",
+						"type": "String"
+					},
+					{
+						"name": "Event initiated by",
+						"type": "String"
+					},
+					{
+						"name": "Resource type",
+						"type": "String"
+					},
+					{
+						"name": "Resource group",
+						"type": "String"
+					},
+					{
+						"name": "Resource",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/dp203storageaccount2024')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolTable1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "Correlationid",
+						"type": "varchar"
+					},
+					{
+						"name": "Operationname",
+						"type": "varchar"
+					},
+					{
+						"name": "Status",
+						"type": "varchar"
+					},
+					{
+						"name": "Eventcategory",
+						"type": "varchar"
+					},
+					{
+						"name": "Level",
+						"type": "varchar"
+					},
+					{
+						"name": "Time",
+						"type": "varchar"
+					},
+					{
+						"name": "Subscription",
+						"type": "varchar"
+					},
+					{
+						"name": "Eventinitiatedby",
+						"type": "varchar"
+					},
+					{
+						"name": "Resourcetype",
+						"type": "varchar"
+					},
+					{
+						"name": "Resourcegroup",
+						"type": "varchar"
+					},
+					{
+						"name": "Resource",
+						"type": "varchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "log_polybase_parquet"
+				},
+				"sqlPool": {
+					"referenceName": "dp203dedicatesqlpool",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/dp203dedicatesqlpool')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/dp203storageaccount2024')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -125,6 +469,86 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/bulkload_dedicateSQLpool')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "--Uncomment the 4 lines below to create a stored procedure for data pipeline orchestration​\n--CREATE PROC bulk_load_log_csv_dedicated\n--AS\n--BEGIN\nCOPY INTO dbo.log_csv_dedicated\n(Correlationid 1, Operationname 2, Status 3, Eventcategory 4, Level 5, Time 6, Subscription 7, Eventinitiatedby 8, Resourcetype 9, Resourcegroup 10, Resource 11)\nFROM 'https://dp203storageaccount2024.dfs.core.windows.net/csv/Log.csv'\nWITH\n(\n\tFILE_TYPE = 'CSV'\n\t,MAXERRORS = 0\n\t,FIRSTROW = 2\n\t,ERRORFILE = 'https://dp203storageaccount2024.dfs.core.windows.net//csv/'\n)\n--END\nGO\n\nSELECT TOP 100 * FROM dbo.log_csv_dedicated\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "dp203dedicatesqlpool",
+						"poolName": "dp203dedicatesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/copycommand_loadto_dedicateTable')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE  TABLE log_csv_dedicated(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](100) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n\n)\n\nCOPY INTO log_csv_dedicated FROM 'https://dp203storageaccount2024.blob.core.windows.net/csv/Log.csv'\nWITH(\n    FILE_TYPE='CSV',\n    CREDENTIAL=(IDENTITY='Storage Account Key'\n    , SECRET='JIF6BIFPxAKsvXTNn4MB5doae0CHH8yBGecOr97UzK1nOMd3V0TkD/SuDuZ/EQEc/PU9nWzi6SPP+AStW3sWVw=='),\n    FIRSTROW=2\n)\n\nSELECT * from log_csv_dedicated",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "dp203dedicatesqlpool",
+						"poolName": "dp203dedicatesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/copycommand_loadto_dedicateTable_parquet')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE  TABLE log_parquet_dedicated(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](100) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n\n)\n;\nCOPY INTO log_parquet_dedicated FROM 'https://dp203storageaccount2024.blob.core.windows.net/parquet/log.parquet'\nWITH\n(\n    FILE_TYPE='Parquet',\n    CREDENTIAL=(\n        IDENTITY='Storage account key',\n        SECRET ='JIF6BIFPxAKsvXTNn4MB5doae0CHH8yBGecOr97UzK1nOMd3V0TkD/SuDuZ/EQEc/PU9nWzi6SPP+AStW3sWVw=='\n\n    )\n)\n\nselect * from log_parquet_dedicated\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "dp203dedicatesqlpool",
+						"poolName": "dp203dedicatesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/dedicatedsql-externaltable-csv')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE DATABASE SCOPED CREDENTIAL logfile_credential\nWITH IDENTITY='dp203storageaccount2024',\n     SECRET ='JIF6BIFPxAKsvXTNn4MB5doae0CHH8yBGecOr97UzK1nOMd3V0TkD/SuDuZ/EQEc/PU9nWzi6SPP+AStW3sWVw=='\n\nDROP EXTERNAL FILE FORMAT csv_externaltable_format;\nCREATE EXTERNAL FILE FORMAT csv_externaltable_format\nWITH (\n    FORMAT_TYPE= DELIMITEDTEXT,\n    FORMAT_OPTIONS(\n        FIRST_ROW=2,\n        FIELD_TERMINATOR=','\n    )\n)\n\nDROP EXTERNAL DATA SOURCE logfile_externaltable;\nCREATE EXTERNAL DATA SOURCE logfile_externaltable\nWITH(\n    LOCATION ='abfss://csv@dp203storageaccount2024.dfs.core.windows.net',\n    CREDENTIAL=logfile_credential,\n    TYPE=HADOOP\n)\n\nDROP EXTERNAL TABLE logdata_externaltable_csv;\nCREATE EXTERNAL TABLE logdata_externaltable_csv\n(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](100) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n\n)\nWITH(\n    LOCATION='/Log.csv',\n    DATA_SOURCE=logfile_externaltable,\n    FILE_FORMAT=csv_externaltable_format\n)\n\nselect * from logdata_externaltable_csv\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/dedicatedsql-externaltable-parquet')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -135,8 +559,8 @@
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "dp203dedicatesqlpool",
-						"poolName": "dp203dedicatesqlpool"
+						"databaseName": "aasdev",
+						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
 				},
@@ -155,8 +579,28 @@
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "aasdev",
-						"poolName": "Built-in"
+						"databaseName": "dp203dedicatesqlpool",
+						"poolName": "dp203dedicatesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/polybase_dedicatesqlpool')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "drop table log_polybase_parquet;\n\ncreate table log_polybase_parquet\nwith(\n    DISTRIBUTION = ROUND_ROBIN\n)\nAS\nselect * from logdata_externaltable_csv\n\nselect * from log_polybase_parquet\n\n\n\nDELETE from log_polybase_parquet",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "dp203dedicatesqlpool",
+						"poolName": "dp203dedicatesqlpool"
 					},
 					"resultLimit": 5000
 				},
@@ -235,26 +679,6 @@
 			},
 			"dependsOn": [],
 			"location": "eastus"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/copycommand_loadto_dedicateTable')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "CREATE  TABLE log_csv_dedicated(\n    [Correlationid] [varchar](200) NULL,\n\t[Operationname] [varchar](200) NULL,\n\t[Status] [varchar](100) NULL,\n\t[Eventcategory] [varchar](100) NULL,\n\t[Level] [varchar](100) NULL,\n\t[Time] [varchar](100) NULL,\n\t[Subscription] [varchar](200) NULL,\n\t[Eventinitiatedby] [varchar](1000) NULL,\n\t[Resourcetype] [varchar](1000) NULL,\n\t[Resourcegroup] [varchar](1000) NULL,\n    [Resource] [varchar](2000) NULL\n\n)\n\nCOPY INTO log_csv_dedicated FROM 'https://dp203storageaccount2024.blob.core.windows.net/csv/Log.csv'\nWITH(\n    FILE_TYPE='CSV',\n    CREDENTIAL=(IDENTITY='Storage Account Key'\n    , SECRET='JIF6BIFPxAKsvXTNn4MB5doae0CHH8yBGecOr97UzK1nOMd3V0TkD/SuDuZ/EQEc/PU9nWzi6SPP+AStW3sWVw=='),\n    FIRSTROW=2\n)\n\nSELECT * from log_csv_dedicated",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "dp203dedicatesqlpool",
-						"poolName": "dp203dedicatesqlpool"
-					},
-					"resultLimit": 5000
-				},
-				"type": "SqlQuery"
-			},
-			"dependsOn": []
 		}
 	]
 }
