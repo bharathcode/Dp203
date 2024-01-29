@@ -1,0 +1,17 @@
+{
+	"name": "polybase_dedicatesqlpool",
+	"properties": {
+		"content": {
+			"query": "drop table log_polybase_parquet;\n\ncreate table log_polybase_parquet\nwith(\n    DISTRIBUTION = ROUND_ROBIN\n)\nAS\nselect * from logdata_externaltable_csv\n\nselect * from log_polybase_parquet",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "dp203dedicatesqlpool",
+				"poolName": "dp203dedicatesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
