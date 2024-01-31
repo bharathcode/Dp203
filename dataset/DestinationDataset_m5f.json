@@ -1,0 +1,24 @@
+{
+	"name": "DestinationDataset_m5f",
+	"properties": {
+		"parameters": {
+			"cw_table": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().cw_table",
+				"type": "Expression"
+			}
+		},
+		"sqlPool": {
+			"referenceName": "dp203dedicatesqlpool",
+			"type": "SqlPoolReference"
+		}
+	}
+}
