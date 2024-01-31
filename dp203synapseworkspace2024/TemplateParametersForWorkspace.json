@@ -5,6 +5,9 @@
 		"workspaceName": {
 			"value": "dp203synapseworkspace2024"
 		},
+		"dp203sqldatabase2024_connectionString": {
+			"value": ""
+		},
 		"dp203storageaccount2024_accountKey": {
 			"value": ""
 		},
